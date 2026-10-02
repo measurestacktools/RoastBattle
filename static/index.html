@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🔥 ROAST BATTLE</title>
+<link rel="stylesheet" href="/static/styles.css" />
+<link rel="icon" href="/favicon.ico" />
+</head>
+<body>
+<div class="arena-bg" aria-hidden="true"></div>
+
+<header class="scoreboard">
+  <div class="scoreboard-inner">
+    <div class="brand">
+      <span class="brand-flame">🔥</span>
+      <span class="brand-text">ROAST<em>BATTLE</em></span>
+    </div>
+    <div class="round-pips" id="round-pips" aria-label="Round progress">
+      <span class="pip" data-pip="1">1</span>
+      <span class="pip-line"></span>
+      <span class="pip" data-pip="2">2</span>
+      <span class="pip-line"></span>
+      <span class="pip" data-pip="3">3</span>
+    </div>
+    <div class="scoreboard-right">
+      <span class="status-pill" id="api-status-pill">CHECKING…</span>
+      <button class="icon-btn" id="open-settings" type="button" aria-label="Open settings">⚙️</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+
+  <!-- ============ SCREEN 1: LANDING ============ -->
+  <section id="screen-landing" class="screen active">
+    <div class="hero">
+      <h1 class="mega-title"><span class="flame">🔥</span> ROAST <span class="title-battle">BATTLE</span></h1>
+      <p class="subtitle">Think you can survive the roast?</p>
+      <p class="description">Pick a target, pick your pain level, and trade blow-for-blow with the AI across 2 savage rounds plus a no-mercy final. Bring a comeback or get cooked.</p>
+    </div>
+
+    <div class="card setup-card">
+      <label class="field-label" for="target-input">WHAT SHOULD WE ROAST?</label>
+      <div class="target-row">
+        <input id="target-input" type="text" maxlength="80" placeholder="e.g. my study table" autocomplete="off" />
+        <button id="start-btn" class="btn btn-fire" type="button">START BATTLE ⚔️</button>
+      </div>
+      <div class="chips" id="example-chips">
+        <button type="button" class="chip" data-target="study table">study table</button>
+        <button type="button" class="chip" data-target="old laptop">old laptop</button>
+        <button type="button" class="chip" data-target="alarm clock">alarm clock</button>
+        <button type="button" class="chip" data-target="exam timetable">exam timetable</button>
+        <button type="button" class="chip" data-target="gaming setup">gaming setup</button>
+        <button type="button" class="chip" data-target="terrible handwriting">terrible handwriting</button>
+      </div>
+
+      <p class="field-label">CHOOSE YOUR PAIN LEVEL</p>
+      <div class="style-grid" id="style-grid" role="radiogroup" aria-label="Roast style">
+        <button type="button" class="style-card" data-style="friendly" role="radio" aria-checked="false">
+          <span class="style-emoji">😄</span><span class="style-name">Friendly</span><span class="style-desc">playful jabs</span>
+        </button>
+        <button type="button" class="style-card selected" data-style="savage" role="radio" aria-checked="true">
+          <span class="style-emoji">🔥</span><span class="style-name">Savage</span><span class="style-desc">no survivors</span>
+        </button>
+        <button type="button" class="style-card" data-style="absurd" role="radio" aria-checked="false">
+          <span class="style-emoji">😂</span><span class="style-name">Absurd</span><span class="style-desc">unhinged chaos</span>
+        </button>
+        <button type="button" class="style-card" data-style="ai-overload" role="radio" aria-checked="false">
+          <span class="style-emoji">🤖</span><span class="style-name">AI Overload</span><span class="style-desc">robot meltdown</span>
+        </button>
+      </div>
+
+      <p class="inline-error" id="landing-error" role="alert" hidden></p>
+      <p class="loading-line" id="start-loading" hidden>🔥 Entering the arena…</p>
+    </div>
+
+    <div class="rules-strip">
+      <span>⚔️ 2 ROUNDS</span><span>🔥 FINAL = NO MERCY</span><span>🏆 SCORED /100</span>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2: BATTLE ============ -->
+  <section id="screen-battle" class="screen">
+    <div class="round-banner" id="round-banner">ROUND 1</div>
+    <p class="redirect-notice" id="redirect-notice" hidden></p>
+
+    <div class="target-card">
+      <span class="target-tag">🎯 TARGET</span>
+      <span class="target-text" id="battle-target">—</span>
+      <span class="style-tag" id="battle-style">savage</span>
+    </div>
+
+    <div class="versus-grid">
+      <div class="fighter-card ai-card">
+        <div class="fighter-head">🤖 AI ROAST <span class="live-dot"></span></div>
+        <p class="roast-text" id="ai-roast-text">—</p>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="fighter-card player-card">
+        <div class="fighter-head">😎 YOUR COMEBACK</div>
+        <p class="roast-text dim" id="player-last-text">Your move, champ. Cook it back.</p>
+        <div class="score-chips" id="score-chips" hidden>
+          <span class="score-chip you">YOU: <b id="score-you">0</b>/10</span>
+          <span class="score-chip ai">AI: <b id="score-ai">0</b>/10</span>
+        </div>
+        <p class="fun-caption" id="fun-caption" hidden>just for fun — judges are definitely biased</p>
+      </div>
+    </div>
+
+    <p class="verdict-line" id="verdict-line" hidden></p>
+
+    <div class="reaction-row" id="reaction-row">
+      <button type="button" class="react-btn" data-react="funny">😂 funny</button>
+      <button type="button" class="react-btn" data-react="worse">😎 handle worse</button>
+      <button type="button" class="react-btn" data-react="harder">🔥 roast harder</button>
+    </div>
+
+    <div class="card comeback-card">
+      <label class="field-label" for="comeback-input">YOUR COMEBACK</label>
+      <div class="target-row">
+        <input id="comeback-input" type="text" maxlength="280" placeholder="Type your comeback and hit SEND…" autocomplete="off" />
+        <button id="send-btn" class="btn btn-fire" type="button">SEND 👊</button>
+      </div>
+      <p class="inline-error" id="battle-error" role="alert" hidden></p>
+      <p class="loading-line" id="battle-loading" hidden>🔥 AI is preparing the roast…</p>
+      <button id="quit-btn" class="link-btn" type="button">quit to menu</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 3: RESULT ============ -->
+  <section id="screen-result" class="screen">
+    <h2 class="result-title">🏆 ROAST BATTLE RESULT</h2>
+    <div class="winner-banner" id="winner-banner">WINNER</div>
+
+    <div class="final-grid">
+      <div class="final-card you-card">
+        <div class="final-label">😎 YOU</div>
+        <div class="final-score"><span id="final-player">0</span><span class="out-of">/100</span></div>
+        <div class="final-bar"><div class="final-fill you-fill" id="final-player-bar"></div></div>
+      </div>
+      <div class="final-vs">VS</div>
+      <div class="final-card ai-final-card">
+        <div class="final-label">🤖 AI</div>
+        <div class="final-score"><span id="final-ai">0</span><span class="out-of">/100</span></div>
+        <div class="final-bar"><div class="final-fill ai-fill" id="final-ai-bar"></div></div>
+      </div>
+    </div>
+
+    <div class="card verdict-card">
+      <div class="verdict-title">🎤 FINAL VERDICT</div>
+      <p class="verdict-text" id="funny-verdict">—</p>
+      <p class="verdict-text dim-sm" id="last-verdict">—</p>
+    </div>
+
+    <div class="result-btns">
+      <button id="again-btn" class="btn btn-fire" type="button">🔁 PLAY AGAIN</button>
+      <button id="new-btn" class="btn btn-ghost" type="button">🎯 NEW TARGET</button>
+      <button id="copy-btn" class="btn btn-ghost" type="button">📋 COPY RESULT</button>
+    </div>
+    <p class="loading-line" id="result-loading" hidden>🔥 Warming up the rematch…</p>
+    <p class="inline-error" id="result-error" role="alert" hidden></p>
+  </section>
+</main>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-backdrop" id="settings-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-head">
+      <h3 id="settings-title">⚙️ Settings</h3>
+      <button class="icon-btn" id="close-settings" type="button" aria-label="Close settings">✖</button>
+    </div>
+    <p class="modal-desc">Paste your API key to unlock battles. It is sent to the server only — never stored in this browser.</p>
+    <label class="field-label" for="key-input">API KEY</label>
+    <input id="key-input" type="password" placeholder="sk-…" autocomplete="off" />
+    <div class="modal-btns">
+      <button id="save-key-btn" class="btn btn-fire" type="button">SAVE KEY</button>
+      <button id="remove-key-btn" class="btn btn-ghost" type="button">REMOVE</button>
+    </div>
+    <p class="inline-error" id="settings-error" role="alert" hidden></p>
+    <p class="status-line" id="settings-status">Status: checking…</p>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
